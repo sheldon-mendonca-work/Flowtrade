@@ -1,0 +1,31 @@
+flowtrade/
+│
+├── services/
+│   ├── order-service/
+│   ├── matching-engine/
+│   ├── trade-service/
+│   ├── portfolio-service/
+│   ├── market-data-service/
+│   └── risk-service/
+│   └── api-gateway/
+│
+├── libraries/
+│   ├── observability/
+│   ├── kafka/
+│   ├── common-models/
+│   └── testing/
+│
+├── infra/
+│   ├── docker/
+│   ├── grafana/
+│   ├── prometheus/
+│   ├── loki/
+│   ├── jaeger/
+│   ├── postgres/
+│   └── kafka/
+│
+├── docs/
+│
+├── scripts/
+│
+└── README.md

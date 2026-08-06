@@ -1,0 +1,30 @@
+# version: '3.9'
+
+services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.158.0
+    container_name: otel-collector
+
+    command: 
+      - "--config=/etc/otelcol/config.yaml"
+    
+    ports:
+      - "4317:4317" # OTLP GRPC
+      - "4318:4318" # OTLP HTTP
+    
+    env_file:
+      - ../env/infra-opentelemetry.env
+    
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otelcol/config.yaml:ro # :ro -> read-only
+
+    restart: unless-stopped
+  
+  jaeger:
+    image: jaegertracing/jaeger:2.20.0
+    container_name: jaeger
+
+    ports:
+      - "16686:16686"
+    
+    restart: unless-stopped

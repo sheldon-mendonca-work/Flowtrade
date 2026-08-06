@@ -1,0 +1,16 @@
+name: 'flowtrade-postgres'
+
+services:
+  postgres:
+    image: postgres:15
+    restart: unless-stopped
+    env_file:
+      - ../env/postgres.env
+    ports:
+      - "${POSTGRES_HOST_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      
+volumes:
+  postgres_data:

@@ -1,0 +1,123 @@
+Architecture
+
+These explain the high-level shape of the system.
+
+ADR-001: Adopt a Microservices Architecture
+ADR-002: Event-Driven Communication Using Kafka
+ADR-003: Standardize on OpenTelemetry for Instrumentation
+ADR-004: Use Jaeger as the Initial Trace Backend
+ADR-005: Introduce an API Gateway
+ADR-006: Shared Libraries for Cross-Cutting Concerns
+ADR-007: Use Domain-Driven Service Boundaries
+API Design
+ADR-008: REST for Synchronous Communication
+ADR-009: Idempotency for Order Submission APIs
+ADR-010: API Versioning Strategy
+ADR-011: Standard Error Response Format
+Observability
+ADR-012: Structured JSON Logging
+ADR-013: Centralized Log Enrichment
+ADR-014: Trace Context Propagation
+ADR-015: OpenTelemetry Collector as Telemetry Gateway
+ADR-016: Metrics Collection with Prometheus
+ADR-017: Correlating Logs with Distributed Traces
+Matching Engine
+
+This will probably become the most interesting section.
+
+ADR-018: In-Memory Order Book
+ADR-019: Price-Time Priority Matching
+ADR-020: Single Writer Principle
+ADR-021: Avoid Distributed Locks in Matching
+ADR-022: Event Ordering Guarantees
+Persistence
+ADR-023: PostgreSQL as Source of Truth
+ADR-024: Transaction Management Strategy
+ADR-025: Outbox Pattern for Reliable Event Publishing
+ADR-026: Read Models vs Write Models
+ADR-027: Optimistic Locking Strategy
+Messaging
+ADR-028: Kafka Topic Naming Convention
+ADR-029: Partitioning Strategy
+ADR-030: Consumer Group Design
+ADR-031: Dead Letter Queue Strategy
+ADR-032: Retry Strategy
+ADR-033: Event Schema Evolution
+Performance
+
+These are Staff-level topics.
+
+ADR-034: Virtual Threads vs Platform Threads
+ADR-035: Thread Pool Strategy
+ADR-036: Connection Pool Sizing
+ADR-037: Caching Strategy with Redis
+ADR-038: Avoiding Head-of-Line Blocking
+Reliability
+ADR-039: Failure Isolation Between Services
+ADR-040: Circuit Breaker Strategy
+ADR-041: Timeout Strategy
+ADR-042: Graceful Shutdown
+ADR-043: Backpressure Strategy
+Security
+ADR-044: JWT Authentication
+ADR-045: Service-to-Service Authentication
+ADR-046: Secret Management
+ADR-047: TLS Strategy
+Deployment
+ADR-048: Docker for Local Development
+ADR-049: Configuration via Environment Variables
+ADR-050: Twelve-Factor Configuration
+ADR-051: Health Check Strategy
+ADR-052: Readiness vs Liveness Endpoints
+Coding Standards
+
+These are often overlooked but show engineering maturity.
+
+ADR-053: Java Records for Immutable DTOs
+ADR-054: Constructor Injection
+ADR-055: Package Structure by Feature
+ADR-056: Avoid Framework Leakage into Domain Models
+ADR-057: Exception Handling Strategy
+Future (Advanced)
+
+These are great if you build them later.
+
+ADR-058: CQRS for Trading Operations
+ADR-059: Event Sourcing Evaluation
+ADR-060: Risk Engine Design
+ADR-061: Market Data Distribution Strategy
+ADR-062: Horizontal Scaling of Stateless Services
+
+
+
+Suggestions for writing good ADRs
+
+Characteristics of a good ADR:
+
+    Rationale: Explain the reasons for doing the particular AD. This can include the context (see below), pros and cons of various potential choices, feature comparisons, cost/benefit discussions, and more.
+
+    Specific: Each ADR should be about one AD, not multiple ADs.
+
+    Timestamps: Identify when each item in the ADR is written. This is especially important for aspects that may change over time, such as costs, schedules, scaling, and the like.
+
+    Immutable: Don't alter existing information in an ADR. Instead, amend the ADR by adding new information, or supersede the ADR by creating a new ADR.
+
+Characteristics of a good "Context" section in an ADR:
+
+    Explain your organization's situation and business priorities.
+
+    Include rationale and considerations based on social and skills makeups of your teams.
+
+    Include pros and cons that are relevant, and describe them in terms that align with your needs and goals.
+
+Characteristics of good "Consequences" section in an ADR:
+
+    Explain what follows from making the decision. This can include the effects, outcomes, outputs, follow ups, and more.
+
+    Include information about any subsequent ADRs. It's relatively common for one ADR to trigger the need for more ADRs, such as when one ADR makes a big overarching choice, which in turn creates needs for more smaller decisions.
+
+    Include any after-action review processes. It's typical for teams to review each ADR one month later, to compare the ADR information with what's happened in actual practice, in order to learn and grow.
+
+A new ADR may take the place of a previous ADR:
+
+    When an AD is made that replaces or invalidates a previous ADR, then a new ADR should be created

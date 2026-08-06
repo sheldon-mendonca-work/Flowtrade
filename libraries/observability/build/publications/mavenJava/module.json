@@ -1,0 +1,99 @@
+{
+  "formatVersion": "1.1",
+  "component": {
+    "group": "com.flowtrade",
+    "module": "observability",
+    "version": "0.0.1-SNAPSHOT",
+    "attributes": {
+      "org.gradle.status": "integration"
+    }
+  },
+  "createdBy": {
+    "gradle": {
+      "version": "9.6.1"
+    }
+  },
+  "variants": [
+    {
+      "name": "apiElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-api"
+      },
+      "dependencies": [
+        {
+          "group": "org.slf4j",
+          "module": "slf4j-api",
+          "version": {
+            "requires": "2.0.18"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "observability-0.0.1-SNAPSHOT.jar",
+          "url": "observability-0.0.1-SNAPSHOT.jar",
+          "size": 6674,
+          "sha512": "38e52e5fcf50aa116274f4d1ab2ecc38d4275ee5ae2b210359d68578095888e658b0de3f65444a2799d8ddee3f30a31bfcdb952784f5451968bfe34430b1fbd9",
+          "sha256": "639821e49e4819289256f4671737a3db0a0638f38d60e4efeb7292917c830747",
+          "sha1": "98b744901325ab1fb269b0de512d03b13265c4b1",
+          "md5": "a9f524e8f9c371f2cfcd9fa405fee3b5"
+        }
+      ]
+    },
+    {
+      "name": "runtimeElements",
+      "attributes": {
+        "org.gradle.category": "library",
+        "org.gradle.dependency.bundling": "external",
+        "org.gradle.jvm.version": 21,
+        "org.gradle.libraryelements": "jar",
+        "org.gradle.usage": "java-runtime"
+      },
+      "dependencies": [
+        {
+          "group": "com.fasterxml.jackson.core",
+          "module": "jackson-databind",
+          "version": {
+            "requires": "2.20.0"
+          }
+        },
+        {
+          "group": "com.fasterxml.jackson.datatype",
+          "module": "jackson-datatype-jsr310",
+          "version": {
+            "requires": "2.22.1"
+          }
+        },
+        {
+          "group": "io.opentelemetry",
+          "module": "opentelemetry-api",
+          "version": {
+            "requires": "1.64.0"
+          }
+        },
+        {
+          "group": "org.slf4j",
+          "module": "slf4j-api",
+          "version": {
+            "requires": "2.0.18"
+          }
+        }
+      ],
+      "files": [
+        {
+          "name": "observability-0.0.1-SNAPSHOT.jar",
+          "url": "observability-0.0.1-SNAPSHOT.jar",
+          "size": 6674,
+          "sha512": "38e52e5fcf50aa116274f4d1ab2ecc38d4275ee5ae2b210359d68578095888e658b0de3f65444a2799d8ddee3f30a31bfcdb952784f5451968bfe34430b1fbd9",
+          "sha256": "639821e49e4819289256f4671737a3db0a0638f38d60e4efeb7292917c830747",
+          "sha1": "98b744901325ab1fb269b0de512d03b13265c4b1",
+          "md5": "a9f524e8f9c371f2cfcd9fa405fee3b5"
+        }
+      ]
+    }
+  ]
+}
