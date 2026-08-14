@@ -1,11 +1,11 @@
-package com.flowtrade.order_service.controller;
+package com.flowtrade.order_service.controller.health;
 
 import org.springframework.web.bind.annotation.RestController;
 
 import com.flowtrade.observability.logging.RequestLog;
 import com.flowtrade.observability.logging.StructuredLogger;
-import com.flowtrade.order_service.constants.HealthStatus;
-import com.flowtrade.order_service.dto.HealthResponseDTO;
+import com.flowtrade.order_service.constants.health.enumerations.HealthStatus;
+import com.flowtrade.order_service.dto.health.HealthResponseDTO;
 
 import io.opentelemetry.api.trace.Span;
 

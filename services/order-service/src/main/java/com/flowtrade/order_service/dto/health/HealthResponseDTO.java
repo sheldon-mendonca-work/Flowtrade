@@ -1,6 +1,6 @@
-package com.flowtrade.order_service.dto;
+package com.flowtrade.order_service.dto.health;
 
-import com.flowtrade.order_service.constants.HealthStatus;
+import com.flowtrade.order_service.constants.health.enumerations.HealthStatus;
 
 public class HealthResponseDTO {
     private HealthStatus status;

@@ -1,0 +1,392 @@
+JVM Topics
+
+I would dedicate an hour every week to one JVM topic.
+
+Week 1
+
+GC
+
+Learn
+
+Serial
+
+Parallel
+
+G1
+
+ZGC
+
+Shenandoah
+
+Don't memorize.
+
+Understand
+
+Why
+
+When
+
+Tradeoffs
+Week 2
+
+Java Memory Model
+
+volatile
+
+CAS
+
+Atomic
+
+False sharing
+
+Visibility
+
+Reordering
+Week 3
+
+Threading
+
+Virtual Threads
+
+Carrier Threads
+
+Pinning
+
+Structured Concurrency
+
+ForkJoinPool
+
+ThreadPoolExecutor
+Week 4
+
+JIT
+
+Tiered compilation
+
+Inlining
+
+Escape Analysis
+
+Deoptimization
+
+Warmup
+Week 5
+
+Memory
+
+Heap
+
+Stack
+
+Metaspace
+
+Compressed OOPs
+
+TLAB
+
+Direct Buffers
+Week 6
+
+Profiling
+
+JFR
+
+async-profiler
+
+JMC
+
+VisualVM
+
+------------------------------------------------------------------
+
+JVM Flags
+
+Instead of randomly copying internet flags,
+
+we'll understand every one.
+
+For example
+
+-Xms
+
+Why?
+
+Startup latency.
+
+-Xmx
+
+Heap limit.
+
+-XX:+UseG1GC
+
+Low pause collector.
+
+-XX:+UseZGC
+
+Ultra-low latency.
+
+-XX:MaxGCPauseMillis=50
+
+A hint, not a guarantee.
+
+-XX:+HeapDumpOnOutOfMemoryError
+
+Production essential.
+
+-XX:HeapDumpPath
+
+Where to store dumps.
+
+-Xlog:gc*
+
+GC logging.
+
+-XX:+UnlockDiagnosticVMOptions
+
+Diagnostic features.
+
+-XX:StartFlightRecording
+
+JFR.
+
+-XX:FlightRecorderOptions
+
+JFR tuning.
+
+-XX:NativeMemoryTracking=summary
+
+Native memory debugging.
+
+-XX:+AlwaysPreTouch
+
+Useful for predictable latency.
+
+-XX:+UseContainerSupport
+
+Containers.
+
+-XX:MaxRAMPercentage
+
+Container memory.
+
+-Djdk.tracePinnedThreads
+
+Virtual thread debugging.
+
+-Djdk.virtualThreadScheduler.parallelism
+
+Carrier thread tuning.
+
+
+-----------------------------------------------------------------------------------------
+
+Instead of just Docker + Grafana, you should become comfortable with the JVM's native diagnostics.
+
+Category	Tool	Why It Matters
+JVM Profiling	JFR (Java Flight Recorder)	Low-overhead production diagnostics
+Analysis	Java Mission Control (JMC)	Analyze JFR recordings
+CPU/Allocations	async-profiler	Flame graphs, allocation hotspots, lock contention
+Thread Inspection	jstack	Deadlocks, blocked threads, virtual thread issues
+Heap Analysis	jmap + Eclipse MAT	Memory leaks and retained objects
+Live Monitoring	jcmd	Swiss-army knife for JVMs (GC, JFR, VM info, threads)
+Metrics	Micrometer + Prometheus	Application and JVM metrics
+Tracing	OpenTelemetry + Jaeger	End-to-end request flow
+Logging	Structured JSON logs	Correlate with traces and metrics
+Benchmarking	JMH	Correct Java microbenchmarks
+Load Testing	k6	Validate latency and throughput under load
+
+
+
+-----------------------------------------------------
+
+
+Week 1 Day 1
+Platform Skeleton
+
+Every service gets
+
+Spring Boot
+
+Virtual Thread support (disabled for now)
+
+Actuator
+
+Micrometer
+
+OTel
+
+Structured Logging
+
+Health
+
+Readiness
+
+Liveness
+
+Global Exception Handler
+
+Flyway
+
+Docker
+
+Configuration system
+
+Graceful shutdown
+
+JFR support
+
+GC logging
+
+No Order API yet.
+
+This becomes the template for every future service.
+
+Week 1 Day 2
+
+Configuration.
+
+Understand every JVM flag you're using.
+
+Topics
+
+Heap sizing
+
+-Xms
+
+-Xmx
+
+Container awareness
+
+GC logs
+
+Thread stack
+
+File descriptors
+
+Timezone
+
+UTF-8
+
+Flight Recorder
+
+Native Memory Tracking
+
+Deliverable
+
+jvm.options
+
+instead of burying flags inside Dockerfiles.
+
+Week 1 Day 3
+
+Observability
+
+Metrics
+
+HTTP
+
+JVM
+
+GC
+
+Thread pools
+
+Executor
+
+Datasource
+
+Business metrics
+
+Logging
+
+Trace ID
+
+Span ID
+
+Correlation ID
+
+Request ID
+
+Business IDs
+
+Exception
+
+Latency
+
+Tracing
+
+Already complete.
+
+Week 1 Day 4
+
+Persistence
+
+Flyway
+
+orders
+
+idempotency
+
+outbox
+
+No repositories yet.
+
+Just schemas.
+
+Week 1 Day 5
+
+Idempotency Engine
+
+Implement
+
+Claim
+
+Owner Token
+
+Lease
+
+Response Cache
+
+Request Hash
+
+Recovery Ready
+
+Reusable package.
+
+Week 1 Day 6
+
+Order API
+
+Finally.
+
+POST /orders
+
+By now
+
+almost no infrastructure code remains.
+
+Week 1 Day 7
+
+Tests
+
+Performance
+
+Chaos
+
+Reflection
+
+I think this is a much cleaner learning sequence.
+
+---------------------------------------
+A Rule I Want for This Project
+
+Whenever we introduce a new technology, we'll answer these questions before writing code:
+
+What problem does it solve?
+Why wasn't the previous solution enough?
+What are the trade-offs?
+What happens if it fails?
+How do I debug it in production?
+How do I explain this in an interview?
+
+If we can't answer those six questions, we don't add it yet.

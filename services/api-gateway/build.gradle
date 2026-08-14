@@ -25,11 +25,11 @@ dependencies {
 
 	implementation 'io.opentelemetry:opentelemetry-api:1.64.0'
 
-	// runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 	
-	// testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	
-	// testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
 tasks.named('test') {
