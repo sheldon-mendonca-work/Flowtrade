@@ -3,6 +3,10 @@ package com.flowtrade.order_service.domain.order;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import com.flowtrade.order_service.exceptions.order.InvalidOrderQuantityException;
+import com.flowtrade.order_service.exceptions.order.InvalidOrderStateException;
+import com.flowtrade.order_service.exceptions.order.OrderQuantityExceededException;
+
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.math.BigDecimal;
@@ -248,6 +252,193 @@ public class OrderTest {
 
       assertThatThrownBy(order::open)
           .isInstanceOf(IllegalStateException.class);
+    }
+  }
+
+  @Nested
+  class ExecutedQuantityTest {
+    @Test
+    void shouldStartWithZeroExecutedQuantity() {
+      Order order = Order.create(
+          10,
+          Side.BUY,
+          OrderType.MARKET,
+          null);
+      
+        assertThat(order.executedQuantity()).isEqualTo(0);
+    }
+
+    @Test
+    void shouldTransitionToFilledAfterFullExecution() {
+      Order order = Order.create(
+          10,
+          Side.BUY,
+          OrderType.MARKET,
+          null);
+        
+        order.open();
+        order.execute(5);
+        order.execute(5);
+        assertThat(order.status()).isEqualTo(OrderStatus.FILLED);
+    }
+
+    @Test
+    void shouldRejectExecutionExceedingOrderQuantity() {
+      Order order = Order.create(
+          10,
+          Side.BUY,
+          OrderType.MARKET,
+          null);
+        
+        order.open();
+        order.execute(5);
+        assertThatThrownBy(() -> order.execute(6))
+          .isInstanceOf(OrderQuantityExceededException.class);
+    }
+    
+    @Test
+    void shouldRejectNegativeExecutionQuantity() {
+      Order order = Order.create(
+          10,
+          Side.BUY,
+          OrderType.MARKET,
+          null);
+        
+        order.open();
+        assertThatThrownBy(() -> order.execute(-1))
+          .isInstanceOf(InvalidOrderQuantityException.class);
+    }
+    
+    @Test
+    void shouldRejectZeroExecutionQuantity() {
+      Order order = Order.create(
+          10,
+          Side.BUY,
+          OrderType.MARKET,
+          null);
+        
+        order.open();
+        assertThatThrownBy(() -> order.execute(0))
+          .isInstanceOf(InvalidOrderQuantityException.class);
+    }
+
+    @Test
+    void shouldTransitionFromOpenToPartiallyFilled() {
+      Order order = Order.create(
+          10,
+          Side.BUY,
+          OrderType.MARKET,
+          null);
+        
+        order.open();
+        order.execute(5);
+        assertThat(order.status())
+          .isEqualTo(OrderStatus.PARTIALLY_FILLED);
+    }
+
+    @Test
+    void shouldTrackExecutedQuantityAfterPartialFill() {
+      Order order = Order.create(
+          10,
+          Side.BUY,
+          OrderType.MARKET,
+          null);
+        
+        order.open();
+        order.execute(5);
+        order.execute(3);
+        
+        assertThat(order.executedQuantity())
+          .isEqualTo(8);
+    }
+
+    @Test
+    void shouldRejectExecutionOfPendingOrder() {
+      Order order = Order.create(
+          10,
+          Side.BUY,
+          OrderType.MARKET,
+          null);
+        
+        assertThatThrownBy(() -> order.execute(5))
+          .isInstanceOf(InvalidOrderStateException.class);
+    }
+
+    @Test
+    void shouldRejectExecutionOfCancelledOrder(){
+      Order order = Order.create(
+          10,
+          Side.BUY,
+          OrderType.MARKET,
+          null);
+        
+        order.open();
+        order.cancel();
+        assertThatThrownBy(() -> order.execute(5))
+          .isInstanceOf(InvalidOrderStateException.class);
+    }
+
+    @Test
+    void shouldAccumulateExecutedQuantityAcrossPartialExecutions(){
+    Order order = Order.create(
+          10,
+          Side.BUY,
+          OrderType.MARKET,
+          null);
+        
+        order.open();
+        order.execute(5);
+        order.execute(3);
+        
+        assertThat(order.status())
+          .isEqualTo(OrderStatus.PARTIALLY_FILLED);
+    }
+
+    @Test
+    void shouldCancelPartiallyFilledOrder(){
+    Order order = Order.create(
+          10,
+          Side.BUY,
+          OrderType.MARKET,
+          null);
+        
+        order.open();
+        order.execute(5);
+        order.cancel();
+        
+        assertThat(order.status())
+          .isEqualTo(OrderStatus.CANCELLED);
+    }
+
+    @Test
+    void shouldRejectOpeningAPartiallyFilledOrder() {
+      Order order = Order.create(
+          10,
+          Side.BUY,
+          OrderType.MARKET,
+          null);
+
+      order.open();
+      order.execute(5);
+
+      assertThatThrownBy(order::open)
+          .isInstanceOf(IllegalStateException.class);
+    }
+
+    @Test
+    void shouldTransitionToFilledWhenExecutingRemainingQuantity() {
+      Order order = Order.create(
+          10,
+          Side.BUY,
+          OrderType.MARKET,
+          null);
+        
+        order.open();
+        order.execute(5);
+        order.execute(5);
+        
+        assertThat(order.status())
+          .isEqualTo(OrderStatus.FILLED);
     }
   }
 }
