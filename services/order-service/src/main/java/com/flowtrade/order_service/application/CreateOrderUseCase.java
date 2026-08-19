@@ -1,5 +1,6 @@
 package com.flowtrade.order_service.application;
 
+import com.flowtrade.order_service.constants.response.HeaderResponseConstants;
 import com.flowtrade.order_service.domain.order.IdempotencyKey;
 import com.flowtrade.order_service.domain.order.Order;
 import com.flowtrade.order_service.domain.order.OrderType;
@@ -20,7 +21,7 @@ public class CreateOrderUseCase {
 
   public Order createOrder(int quantity, Side side, OrderType orderType, Price price, IdempotencyKey key){
     if(key == null){
-      throw new InvalidIdempotencyKeyException("Idempotency Key cannot be null");
+      throw new InvalidIdempotencyKeyException(HeaderResponseConstants.IDEMPOTENCY_NULL);
     }
     Order existingOrder = keyStoreDB.get(key);
     if (existingOrder != null) {
