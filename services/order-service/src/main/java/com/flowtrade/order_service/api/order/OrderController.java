@@ -13,25 +13,28 @@ import com.flowtrade.order_service.domain.order.IdempotencyKey;
 import com.flowtrade.order_service.domain.order.Order;
 import com.flowtrade.order_service.domain.order.Price;
 import com.flowtrade.order_service.dto.order.CreateOrderRequestDTO;
+import com.flowtrade.order_service.dto.order.CreateOrderResponseDTO;
+
 
 
 @RestController
 public class OrderController {
-  
   private final CreateOrderUseCase useCase;
-
+  
   public OrderController(CreateOrderUseCase useCase) {
     this.useCase = useCase;
   }
   
   @PostMapping("/orders")
-  public ResponseEntity<Order> createOrder(
+  public ResponseEntity<CreateOrderResponseDTO> createOrder(
     @RequestHeader(HeaderConstants.IDEMPOTENCY_KEY_HEADER) String idempotencyKey,
     @RequestBody CreateOrderRequestDTO requestOrder
   ){
-    Order createdOrder = useCase.createOrder(requestOrder.quantity(), requestOrder.side(), requestOrder.orderType(), new Price(requestOrder.price()), new IdempotencyKey(idempotencyKey));
-
-    return ResponseEntity.status(HttpStatus.CREATED).body(createdOrder);
+      Order createdOrder;
+      
+      createdOrder = useCase.createOrder(requestOrder.quantity(), requestOrder.side(), requestOrder.orderType(), new Price(requestOrder.price()), new IdempotencyKey(idempotencyKey));
+      
+    return ResponseEntity.status(HttpStatus.CREATED).body(new CreateOrderResponseDTO(createdOrder.id().value(), createdOrder.side(), createdOrder.quantity() , createdOrder.orderType(), createdOrder.price().value()));
   }
 
   

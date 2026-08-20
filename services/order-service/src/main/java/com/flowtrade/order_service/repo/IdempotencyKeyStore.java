@@ -3,8 +3,11 @@ package com.flowtrade.order_service.repo;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.stereotype.Repository;
+
 import com.flowtrade.order_service.domain.order.IdempotencyKey;
 
+@Repository
 public class IdempotencyKeyStore<T> implements KeyStoreDB<T>{
   private  final Map<IdempotencyKey, T> store;
   

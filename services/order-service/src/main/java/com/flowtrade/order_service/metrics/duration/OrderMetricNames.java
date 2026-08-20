@@ -1,8 +1,7 @@
 package com.flowtrade.order_service.metrics.duration;
 
 public final class OrderMetricNames {
-  private OrderMetricNames() {
-  }
+  private OrderMetricNames() {}
 
   public static final String ORDER_CREATE_DURATION = "flowtrade.order.create.duration";
 

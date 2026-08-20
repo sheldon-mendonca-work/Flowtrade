@@ -2,26 +2,38 @@ package com.flowtrade.order_service.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.flowtrade.order_service.constants.tracing.OrderTracingConstants;
 import com.flowtrade.order_service.domain.order.IdempotencyKey;
 import com.flowtrade.order_service.domain.order.Order;
 import com.flowtrade.order_service.domain.order.OrderType;
 import com.flowtrade.order_service.domain.order.Price;
 import com.flowtrade.order_service.domain.order.Side;
 import com.flowtrade.order_service.exceptions.order.InvalidIdempotencyKeyException;
+import com.flowtrade.order_service.infra.tracing.MockTracer;
 import com.flowtrade.order_service.repo.IdempotencyKeyStore;
 import com.flowtrade.order_service.repo.InMemFailingRepository;
 import com.flowtrade.order_service.repo.InMemoryRepository;
 import com.flowtrade.order_service.repo.KeyStoreDB;
 import com.flowtrade.order_service.repo.OrderRepository;
 
-public class CreateOrderTest {
+import io.opentelemetry.api.GlobalOpenTelemetry;
+import io.opentelemetry.api.trace.Tracer;
 
+@ExtendWith(MockitoExtension.class)
+public class CreateOrderTest {
   @Nested
   class CreationTest {
 
@@ -29,7 +41,9 @@ public class CreateOrderTest {
     void shouldCreateOrder() {
       OrderRepository repo = new InMemoryRepository();
       KeyStoreDB<Order> idempotencyKeyStore = new IdempotencyKeyStore<>();
-      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore);
+      Tracer tracer = MockTracer.mockTracer(OrderTracingConstants.ORDER_CREATE_SPAN);
+
+      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore, tracer);
       IdempotencyKey key = new IdempotencyKey("key");
 
       Order order = useCase.createOrder(10,
@@ -45,7 +59,8 @@ public class CreateOrderTest {
     void shouldRejectInvalidOrderCreation() {
       OrderRepository repo = new InMemoryRepository();
       KeyStoreDB<Order> idempotencyKeyStore = new IdempotencyKeyStore<>();
-      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore);
+      Tracer tracer = MockTracer.mockTracer(OrderTracingConstants.ORDER_CREATE_SPAN);
+      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore, tracer);
       IdempotencyKey key = new IdempotencyKey("key");
 
       assertThatThrownBy(() -> useCase.createOrder(10,
@@ -63,7 +78,9 @@ public class CreateOrderTest {
       OrderRepository repo = new InMemoryRepository();
       IdempotencyKey key = new IdempotencyKey("key");
       KeyStoreDB<Order> idempotencyKeyStore = new IdempotencyKeyStore<>();
-      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore);
+      Tracer tracer = MockTracer.mockTracer(OrderTracingConstants.ORDER_CREATE_SPAN);
+
+      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore, tracer);
       Order useCaseCreatedOrder = useCase.createOrder(10, Side.BUY, OrderType.LIMIT, new Price(new BigDecimal("100.0")),
           key);
 
@@ -77,7 +94,9 @@ public class CreateOrderTest {
     void shouldPropagateOrderPersistenceFailure() {
       OrderRepository repo = new InMemFailingRepository();
       KeyStoreDB<Order> idempotencyKeyStore = new IdempotencyKeyStore<>();
-      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore);
+      Tracer tracer = MockTracer.mockTracer(OrderTracingConstants.ORDER_CREATE_SPAN);
+
+      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore, tracer);
       IdempotencyKey key = new IdempotencyKey("key");
 
       assertThatThrownBy(() -> useCase.createOrder(10,
@@ -95,7 +114,9 @@ public class CreateOrderTest {
     void shouldReturnExistingOrderForDuplicateIdempotencyKey() {
       OrderRepository repo = new InMemoryRepository();
       KeyStoreDB<Order> idempotencyKeyStore = new IdempotencyKeyStore<>();
-      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore);
+      Tracer tracer = MockTracer.mockTracer(OrderTracingConstants.ORDER_CREATE_SPAN);
+
+      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore, tracer);
 
       Order useCaseCreatedOrder1 = useCase.createOrder(10, Side.BUY, OrderType.LIMIT,
           new Price(new BigDecimal("100.0")), new IdempotencyKey("Hello"));
@@ -109,7 +130,9 @@ public class CreateOrderTest {
     void shouldReturnOriginalOrderWhenIdempotencyKeyIsReusedWithDifferentDetails() {
       OrderRepository repo = new InMemoryRepository();
       KeyStoreDB<Order> idempotencyKeyStore = new IdempotencyKeyStore<>();
-      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore);
+      Tracer tracer = MockTracer.mockTracer(OrderTracingConstants.ORDER_CREATE_SPAN);
+
+      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore, tracer);
 
       Order useCaseCreatedOrder1 = useCase.createOrder(10, Side.BUY, OrderType.LIMIT,
           new Price(new BigDecimal("100.0")), new IdempotencyKey("Hello"));
@@ -123,7 +146,9 @@ public class CreateOrderTest {
     void shouldRejectInvalidIdempotencyKey() {
       OrderRepository repo = new InMemoryRepository();
       KeyStoreDB<Order> idempotencyKeyStore = new IdempotencyKeyStore<>();
-      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore);
+      Tracer tracer = MockTracer.mockTracer(OrderTracingConstants.ORDER_CREATE_SPAN);
+
+      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore, tracer);
 
       assertThatThrownBy(
           () -> useCase.createOrder(10, Side.BUY, OrderType.LIMIT, new Price(new BigDecimal("100.0")), null))
@@ -134,7 +159,9 @@ public class CreateOrderTest {
     void shouldNotStoreIdempotencyKeyWhenPersistenceFails() {
       OrderRepository repo = new InMemFailingRepository();
       KeyStoreDB<Order> idempotencyKeyStore = new IdempotencyKeyStore<>();
-      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore);
+      Tracer tracer = MockTracer.mockTracer(OrderTracingConstants.ORDER_CREATE_SPAN);
+
+      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore, tracer);
 
       IdempotencyKey key = new IdempotencyKey("Hello");
 
@@ -146,6 +173,30 @@ public class CreateOrderTest {
           key)).isInstanceOf(RuntimeException.class);
 
       assertThat(idempotencyKeyStore.get(key)).isNull();
+    }
+  }
+
+  @Nested
+  class OrderCreateMetricsTest {
+    @Test
+    void shouldHaveSameSpanAtributes() {
+      OrderRepository repo = new InMemFailingRepository();
+      KeyStoreDB<Order> idempotencyKeyStore = new IdempotencyKeyStore<>();
+      Tracer tracer = GlobalOpenTelemetry.getTracer(OrderTracingConstants.ORDER_CREATE_SPAN_FOR_TEST);
+
+      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore, tracer);
+
+      IdempotencyKey key = new IdempotencyKey("Hello");
+
+      assertThatThrownBy(() -> useCase.createOrder(
+          10,
+          Side.BUY,
+          OrderType.LIMIT,
+          new Price(new BigDecimal("100.0")),
+          key)).isInstanceOf(RuntimeException.class);
+
+      assertThat(idempotencyKeyStore.get(key)).isNull();
+
     }
   }
 
