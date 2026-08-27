@@ -2,8 +2,10 @@ package com.flowtrade.order_service.application;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
@@ -197,6 +199,28 @@ public class CreateOrderTest {
 
       assertThat(idempotencyKeyStore.get(key)).isNull();
 
+    }
+
+    @Test
+    void shouldRejectInvalidIdempotencyKey() {
+      OrderRepository repo = mock(OrderRepository.class);
+      KeyStoreDB<Order> idempotencyKeyStore = mock(KeyStoreDB.class);
+      
+      Tracer tracer = MockTracer.mockTracer(OrderTracingConstants.ORDER_CREATE_SPAN);
+
+      CreateOrderUseCase useCase = new CreateOrderUseCase(repo, idempotencyKeyStore, tracer);
+      
+      assertThrows(
+          InvalidIdempotencyKeyException.class,
+          () -> useCase.createOrder(
+              10,
+              Side.BUY,
+              OrderType.LIMIT,
+              new Price(new BigDecimal("200")),
+              null));
+
+      verifyNoInteractions(repo);
+      verifyNoInteractions(idempotencyKeyStore);
     }
   }
 

@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.flowtrade.observability.constants.LogLevelEnum;
+import com.flowtrade.observability.constants.LoggingConstants;
 
 import io.opentelemetry.api.trace.Span;
 import io.opentelemetry.api.trace.SpanContext;
@@ -76,14 +77,36 @@ public final class StructuredLogger {
     return logEntry;
   }
   
-  public static <T> void info(T requestLog) {
-    LogEntry<T> logEntry = createLogEntry(requestLog, LogLevelEnum.INFO);
+  public static <T> void info(T payload) {
+    LogEntry<T> logEntry = createLogEntry(payload, LogLevelEnum.INFO);
 
     
     try {
         log.info(mapper.writeValueAsString(logEntry));
     } catch (JsonProcessingException e) {
-        log.error("Failed to serialize RequestLog", e);
+        log.error(LoggingConstants.SERIALIZATION_FAILURE, e);
+    }
+  }
+  
+  public static <T> void warn(T payload) {
+    LogEntry<T> logEntry = createLogEntry(payload, LogLevelEnum.WARN);
+
+    
+    try {
+        log.warn(mapper.writeValueAsString(logEntry));
+    } catch (JsonProcessingException e) {
+        log.error(LoggingConstants.SERIALIZATION_FAILURE, e);
+    }
+  }
+  
+  public static <T> void error(T payload) {
+    LogEntry<T> logEntry = createLogEntry(payload, LogLevelEnum.ERROR);
+
+    
+    try {
+        log.error(mapper.writeValueAsString(logEntry));
+    } catch (JsonProcessingException e) {
+        log.error(LoggingConstants.SERIALIZATION_FAILURE, e);
     }
   }
 

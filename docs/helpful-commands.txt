@@ -1,1 +1,7 @@
 sudo rm -rf ~/.m2/repository/com/flowtrade/observability
+cd /media/kloseline/D/Projects/FlowTrade/libraries/observability
+./gradlew clean build
+./gradlew publishToMavenLocal
+
+cd /media/kloseline/D/Projects/FlowTrade/services/order-service
+./gradlew clean build

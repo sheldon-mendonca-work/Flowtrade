@@ -3,3 +3,7 @@ POSTGRES_COMPOSE_FILE := infra/postgres/docker-compose.yml
 
 infra-up:
 	docker compose -f ${OTEL_COMPOSE_FILE} -f ${POSTGRES_COMPOSE_FILE} up -d
+
+infra-down:
+	docker compose -f ${OTEL_COMPOSE_FILE} -f ${POSTGRES_COMPOSE_FILE} down
+

@@ -30,9 +30,7 @@ public class OrderController {
     @RequestHeader(HeaderConstants.IDEMPOTENCY_KEY_HEADER) String idempotencyKey,
     @RequestBody CreateOrderRequestDTO requestOrder
   ){
-      Order createdOrder;
-      
-      createdOrder = useCase.createOrder(requestOrder.quantity(), requestOrder.side(), requestOrder.orderType(), new Price(requestOrder.price()), new IdempotencyKey(idempotencyKey));
+    Order createdOrder = useCase.createOrder(requestOrder.quantity(), requestOrder.side(), requestOrder.orderType(), new Price(requestOrder.price()), new IdempotencyKey(idempotencyKey));
       
     return ResponseEntity.status(HttpStatus.CREATED).body(new CreateOrderResponseDTO(createdOrder.id().value(), createdOrder.side(), createdOrder.quantity() , createdOrder.orderType(), createdOrder.price().value()));
   }

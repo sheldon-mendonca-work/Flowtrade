@@ -36,11 +36,11 @@
         {
           "name": "observability-0.0.1-SNAPSHOT.jar",
           "url": "observability-0.0.1-SNAPSHOT.jar",
-          "size": 6674,
-          "sha512": "38e52e5fcf50aa116274f4d1ab2ecc38d4275ee5ae2b210359d68578095888e658b0de3f65444a2799d8ddee3f30a31bfcdb952784f5451968bfe34430b1fbd9",
-          "sha256": "639821e49e4819289256f4671737a3db0a0638f38d60e4efeb7292917c830747",
-          "sha1": "98b744901325ab1fb269b0de512d03b13265c4b1",
-          "md5": "a9f524e8f9c371f2cfcd9fa405fee3b5"
+          "size": 7300,
+          "sha512": "0b124047f011d21847314589cef8b7985d09aa3e5840ee3349a246cd7219ec19eb04b46cd0023c910f76189d19b18ee23304d8347477c0ca808d8288bb506f2d",
+          "sha256": "0928ca8a2ebf9040f5015107a7786945bbc66b551e586d756fc013382cb088e8",
+          "sha1": "eab23ec409d87a73b7f4bd875582bfe162105fed",
+          "md5": "fa6e7642ec23d77e20156a76467220b0"
         }
       ]
     },
@@ -87,11 +87,11 @@
         {
           "name": "observability-0.0.1-SNAPSHOT.jar",
           "url": "observability-0.0.1-SNAPSHOT.jar",
-          "size": 6674,
-          "sha512": "38e52e5fcf50aa116274f4d1ab2ecc38d4275ee5ae2b210359d68578095888e658b0de3f65444a2799d8ddee3f30a31bfcdb952784f5451968bfe34430b1fbd9",
-          "sha256": "639821e49e4819289256f4671737a3db0a0638f38d60e4efeb7292917c830747",
-          "sha1": "98b744901325ab1fb269b0de512d03b13265c4b1",
-          "md5": "a9f524e8f9c371f2cfcd9fa405fee3b5"
+          "size": 7300,
+          "sha512": "0b124047f011d21847314589cef8b7985d09aa3e5840ee3349a246cd7219ec19eb04b46cd0023c910f76189d19b18ee23304d8347477c0ca808d8288bb506f2d",
+          "sha256": "0928ca8a2ebf9040f5015107a7786945bbc66b551e586d756fc013382cb088e8",
+          "sha1": "eab23ec409d87a73b7f4bd875582bfe162105fed",
+          "md5": "fa6e7642ec23d77e20156a76467220b0"
         }
       ]
     }
