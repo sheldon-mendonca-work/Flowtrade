@@ -1,4 +1,4 @@
-package com.flowtrade.order_service.controller.health;
+package com.flowtrade.order_service.api.health;
 
 import org.springframework.web.bind.annotation.RestController;
 

@@ -39,6 +39,7 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-kafka-test'
 	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
 	testImplementation 'org.assertj:assertj-core'
+	testImplementation 'io.opentelemetry:opentelemetry-sdk-testing:1.64.0'
 	
 	testCompileOnly 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -61,7 +62,7 @@ bootRun {
         "-javaagent:/media/kloseline/D/Projects/FlowTrade/infra/openTelemetry/opentelemetry-javaagent.jar",
 		"-Dotel.service.name=order-service",
 		"-Dotel.traces.exporter=otlp",
-		"-Dotel.metrics.exporter=none",
+		"-Dotel.metrics.exporter=otlp",
 		"-Dotel.logs.exporter=none",
 		"-Dotel.exporter.otlp.protocol=grpc",
 		"-Dotel.exporter.otlp.endpoint=http://localhost:4317"

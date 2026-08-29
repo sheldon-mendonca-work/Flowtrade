@@ -1,4 +1,4 @@
-package com.flowtrade.order_service.metrics.logevents;
+package com.flowtrade.order_service.logging.events.order;
 
 public enum OrderCreateEvent {
   ORDER_CREATE_REQUESTED,

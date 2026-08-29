@@ -3,20 +3,22 @@ package com.flowtrade.order_service.application;
 import org.springframework.stereotype.Service;
 
 import com.flowtrade.observability.logging.StructuredLogger;
+import com.flowtrade.order_service.constants.metrics.order.OrderCreateResultEnum;
 import com.flowtrade.order_service.constants.response.HeaderResponseConstants;
-import com.flowtrade.order_service.constants.tracing.OrderTracingConstants;
+import com.flowtrade.order_service.constants.tracing.OrderCreateTracingConstants;
 import com.flowtrade.order_service.domain.order.IdempotencyKey;
 import com.flowtrade.order_service.domain.order.Order;
 import com.flowtrade.order_service.domain.order.OrderType;
 import com.flowtrade.order_service.domain.order.Price;
 import com.flowtrade.order_service.domain.order.Side;
 import com.flowtrade.order_service.exceptions.order.InvalidIdempotencyKeyException;
-import com.flowtrade.order_service.metrics.logRecords.orderCreate.OrderCreateFailedLog;
-import com.flowtrade.order_service.metrics.logRecords.orderCreate.OrderCreateLog;
-import com.flowtrade.order_service.metrics.logRecords.orderCreate.OrderCreateRejectedLog;
-import com.flowtrade.order_service.metrics.logRecords.orderCreate.OrderCreateRequestLog;
-import com.flowtrade.order_service.metrics.logevents.OrderCreateEvent;
-import com.flowtrade.order_service.metrics.logevents.OrderCreateRejectionReason;
+import com.flowtrade.order_service.logging.events.order.OrderCreateEvent;
+import com.flowtrade.order_service.logging.events.order.OrderCreateRejectionReason;
+import com.flowtrade.order_service.logging.records.order.OrderCreateFailedLog;
+import com.flowtrade.order_service.logging.records.order.OrderCreateLog;
+import com.flowtrade.order_service.logging.records.order.OrderCreateRejectedLog;
+import com.flowtrade.order_service.logging.records.order.OrderCreateRequestLog;
+import com.flowtrade.order_service.metrics.order.OrderCreateMetrics;
 import com.flowtrade.order_service.repo.KeyStoreDB;
 import com.flowtrade.order_service.repo.OrderRepository;
 
@@ -30,21 +32,26 @@ public class CreateOrderUseCase {
   private final OrderRepository orderRepository;
   private final KeyStoreDB<Order> keyStoreDB;
   private final Tracer tracer;
+  private final OrderCreateMetrics metrics;
 
-  public CreateOrderUseCase(OrderRepository orderRepository, KeyStoreDB<Order> keyStoreDB, Tracer tracer) {
+  public CreateOrderUseCase(OrderRepository orderRepository, KeyStoreDB<Order> keyStoreDB, Tracer tracer, OrderCreateMetrics metrics) {
     this.orderRepository = orderRepository;
     this.keyStoreDB = keyStoreDB;
     this.tracer = tracer;
+    this.metrics = metrics;
   }
 
   public Order createOrder(int quantity, Side side, OrderType orderType, Price price, IdempotencyKey key) {
     Order savedOrder;
+    long startTime = System.nanoTime();
+    OrderCreateResultEnum resultEnum = OrderCreateResultEnum.CREATED;
     
     Span span = tracer
-        .spanBuilder(OrderTracingConstants.ORDER_CREATE_SPAN)
+        .spanBuilder(OrderCreateTracingConstants.ORDER_CREATE_SPAN)
         .startSpan();
-    span.setAttribute(OrderTracingConstants.ORDER_SIDE, side.name());
-    span.setAttribute(OrderTracingConstants.ORDER_TYPE, orderType.name());
+    span.setAttribute(OrderCreateTracingConstants.ORDER_SIDE, side.name());
+    span.setAttribute(OrderCreateTracingConstants.ORDER_TYPE, orderType.name());
+    
 
     try (Scope ignored = span.makeCurrent()) {
       StructuredLogger.info(
@@ -64,8 +71,11 @@ public class CreateOrderUseCase {
             )
         );
 
+        metrics.orderRejected();
+        resultEnum = OrderCreateResultEnum.REJECTED;
         throw new InvalidIdempotencyKeyException(HeaderResponseConstants.IDEMPOTENCY_NULL);
       }
+      
       Order existingOrder = keyStoreDB.get(key);
 
       if (existingOrder != null) {
@@ -76,6 +86,10 @@ public class CreateOrderUseCase {
                 existingOrder.side(),
                 existingOrder.orderType()));
 
+        
+        metrics.orderCreatedFromIdempotency();
+        
+        resultEnum = OrderCreateResultEnum.IDEMPOTENT_REPLAY;
         return existingOrder;
       }
 
@@ -91,11 +105,16 @@ public class CreateOrderUseCase {
         )
       );
       keyStoreDB.save(key, savedOrder);
+      metrics.orderCreated();
+      resultEnum = OrderCreateResultEnum.CREATED;
       
     } catch(InvalidIdempotencyKeyException exception){
       throw exception;
     } catch (RuntimeException exception) {
       
+      metrics.orderFailed();
+      resultEnum = OrderCreateResultEnum.FAILED;
+
       StructuredLogger.error(
           new OrderCreateFailedLog(
               OrderCreateEvent.ORDER_CREATE_FAILED,
@@ -106,6 +125,7 @@ public class CreateOrderUseCase {
       span.setStatus(StatusCode.ERROR);
       throw exception;
     } finally {
+      metrics.recordCreateDuration(System.nanoTime() - startTime, resultEnum);
       span.end();
     }
 

@@ -41,7 +41,7 @@ bootRun {
         "-javaagent:/media/kloseline/D/Projects/FlowTrade/infra/openTelemetry/opentelemetry-javaagent.jar",
 		"-Dotel.service.name=api-gateway",
 		"-Dotel.traces.exporter=otlp",
-		"-Dotel.metrics.exporter=none",
+		"-Dotel.metrics.exporter=otlp",
 		"-Dotel.logs.exporter=none",
 		"-Dotel.exporter.otlp.protocol=grpc",
 		"-Dotel.exporter.otlp.endpoint=http://localhost:4317"
